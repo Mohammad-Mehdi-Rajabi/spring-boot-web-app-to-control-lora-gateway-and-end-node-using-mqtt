@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LED Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e6e6;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            padding-top: 20px;
+            color: #333;
+            position: relative;
+            z-index: 2;
+        }
+
+        .container {
+            margin: 0 auto;
+            width: 300px;
+            border: 2px solid #999;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .led-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #87cefa;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .led-button .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .led-button.on .indicator {
+            background-color: #FF6F61;
+        }
+
+        .led-button.off .indicator {
+            background-color: #4CAF50;
+        }
+
+        .led-button:hover {
+            background-color: #6ca6cd;
+        }
+
+        .background-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            animation: rotate 20s linear infinite, move 30s ease-in-out infinite;
+            background-image: radial-gradient(circle, #ffffff 5%, transparent 5%),
+            radial-gradient(circle, #ffffff 5%, transparent 5%),
+            linear-gradient(#ffffff 2px, transparent 2px),
+            linear-gradient(90deg, #ffffff 2px, transparent 2px);
+            background-position: 0 0, 25px 25px, 0 0, 0 0;
+            background-size: 50px 50px, 50px 50px, 20px 20px, 20px 20px;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes move {
+            0% {
+                background-position: 0 0, 25px 25px, 0 0, 0 0;
+            }
+            100% {
+                background-position: -50px -50px, -25px -25px, -20px -20px, -20px -20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1>LED Control</h1>
+<div class="container">
+    <button id="led1Button" class="led-button on" onclick="toggleLED(1)">
+        <span class="indicator"></span> LED 1
+    </button>
+    <button id="led2Button" class="led-button on" onclick="toggleLED(2)">
+        <span class="indicator"></span> LED 2
+    </button>
+    <button id="led3Button" class="led-button on" onclick="toggleLED(3)">
+        <span class="indicator"></span> LED 3
+    </button>
+</div>
+<div class="background-effect"></div>
+<script>
+    function toggleLED(ledNumber) {
+        var button = document.getElementById('led' + ledNumber + 'Button');
+        if (button.classList.contains('off')) {
+            button.classList.remove('off');
+            button.classList.add('on');
+            // Perform action for turning LED on
+            var url = 'http://localhost:8765/api/led/' + ledNumber + '/on'; // Replace with your desired URL
+            sendRequest(url);
+            console.log('LED ' + ledNumber + ' turned on');
+        } else {
+            button.classList.remove('on');
+            button.classList.add('off');
+            // Perform action for turning LED off
+            var url = 'http://localhost:8765/api/led/' + ledNumber + '/off'; // Replace with your desired URL
+            sendRequest(url);
+            console.log('LED ' + ledNumber + ' turned off');
+        }
+    }
+
+    function sendRequest(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log('Request sent successfully');
+            }
+        };
+        xhr.send();
+    }
+</script>
+</body>
+</body>
+</html>
